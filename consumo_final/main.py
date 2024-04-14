@@ -31,7 +31,6 @@ if __name__ == "__main__":
             print()
             model = cargar_modelo_clasificacion(str(ruta_archivo)[:-4])
             df_pred = prediccion_clasificacion(model, df_class)
-            print(df_pred)
             df_reg[re.search(r"tuned_(.*?)\.pkl", str(ruta_archivo)).group(1).replace('_', ' ')] = df_pred["prediction_label"]
             
     print(df_reg)
@@ -39,7 +38,22 @@ if __name__ == "__main__":
     for ruta_archivo in regresion_path.glob('**/*'):
         if ruta_archivo.is_file():
             y_pred = prediccion_regresion(cargar_modelo_regresion(str(ruta_archivo)[:-4]), df_reg)
-            print(y_pred["prediction_label"])
-            df_desagregado[re.search(r"modelo (.*?)\.pkl", str(ruta_archivo)).group(1)] = ["y_pred"]
+            df_desagregado[re.search(r"modelo (.*?)\.pkl", str(ruta_archivo)).group(1)] = y_pred["prediction_label"]
 
+    df_desagregado[["Fecha", "Medidor [W]", 'Refrigerator',  
+            'Clothes washer',
+            'Clothes Iron',
+            'Computer',
+            'Oven',
+            'Play',
+            'TV',
+            'Sound system']].to_csv("predictions.csv")
+    df_reg[["Fecha", "Medidor [W]", 'Refrigerator',  
+            'Clothes washer',
+            'Clothes Iron',
+            'Computer',
+            'Oven',
+            'Play',
+            'TV',
+            'Sound system']].to_csv("predictions.csv")
     print(df_desagregado)
